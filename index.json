@@ -2,22 +2,22 @@
 {
   "repo": "cfnew",
   "repo_url": "https://github.com/byJoey/cfnew.git",
-  "timestamp": "2026-01-04 07:04:33",
+  "timestamp": "2026-01-05 20:10:40",
   "status": "success",
   "workdir": "work",
-  "package": "source-cfnew-20260104-070433.tar.gz",
-  "sha256": "ac394e8bb16b6c4308633d760578b7bfc30238768aade380bbf10a69b67712c2",
-  "size_bytes": 169742
+  "package": "source-cfnew-20260105-201040.tar.gz",
+  "sha256": "7ab2f5d0f9b8dc7e3a56b3f4731b036d82ce42b9a245d610b232e2295f036706",
+  "size_bytes": 169750
 }
 ,
 {
   "repo": "edgetunnel",
   "repo_url": "https://github.com/cmliu/edgetunnel.git",
-  "timestamp": "2026-01-04 07:05:08",
+  "timestamp": "2026-01-05 20:12:35",
   "status": "success",
   "workdir": "work",
-  "package": "source-edgetunnel-20260104-070508.tar.gz",
-  "sha256": "e285359dafcdf6df6a80b0fe0e53bf27511d7510700ec237fc83c849e5f4caf4",
-  "size_bytes": 194589
+  "package": "source-edgetunnel-20260105-201235.tar.gz",
+  "sha256": "864c56900927d6162666779a23e6e0a8565fc6128039b502f0629c52733131ec",
+  "size_bytes": 194652
 }
 ]
