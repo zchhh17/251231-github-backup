@@ -2,11 +2,11 @@
 {
   "repo": "edgetunnel",
   "repo_url": "https://github.com/cmliu/edgetunnel.git",
-  "timestamp": "2026-01-14 21:56:43",
+  "timestamp": "2026-01-15 02:42:07",
   "status": "success",
   "workdir": "work",
-  "package": "source-edgetunnel-20260114-215643.tar.gz",
-  "sha256": "d7653401b22275f8fbf6a61ec2521c3de065a3c91e7d709d69f6f8625020957c",
-  "size_bytes": 277665
+  "package": "source-edgetunnel-20260115-024207.tar.gz",
+  "sha256": "6a534b70afa34b487534792d90157f9d09bf804f836948ebda20d3a8b55d0d9a",
+  "size_bytes": 277702
 }
 ]
