@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>GitHub 备份索引</title>
+<style>
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont;
+  margin: 40px;
+  background: #f6f8fa;
+}
+h1 { margin-bottom: 0.2em; }
+.meta { color: #666; margin-bottom: 1.5em; }
+.card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+.repo { font-weight: bold; font-size: 1.1em; }
+.small { color: #555; font-size: 0.9em; }
+code {
+  background: #eee;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+</style>
+</head>
+<body>
+
+<h1>📦 GitHub 备份索引</h1>
+<div class="meta">
+  生成时间：<span id="gen"></span><br>
+  总备份数：<span id="total"></span>
+</div>
+
+<div id="list"></div>
+
+<script>
+const data =
+[
+  {
+    "repo": "cmliu__edgetunnel",
+    "repo_url": "https://github.com/cmliu/edgetunnel.git",
+    "timestamp": "20260120-150057",
+    "status": "success",
+    "package": "source-cmliu__edgetunnel-20260120-150057.tar.gz",
+    "sha256": "6f1c2bf71d33bd6c39d8be3da9dc2cf12aa51b9987798deba27206a8b0be3b01",
+    "size_bytes": 277943
+  }
+]
+;
+
+document.getElementById('gen').textContent = data.generated_at || '';
+document.getElementById('total').textContent = data.length || 0;
+
+const list = document.getElementById('list');
+
+data.forEach(item => {
+  const div = document.createElement('div');
+  div.className = 'card';
+  div.innerHTML = `
+    <div class="repo">${item.repo}</div>
+    <div class="small">时间：${item.timestamp}</div>
+    <div class="small">包：<code>${item.package}</code></div>
+    <div class="small">SHA256：<code>${item.sha256}</code></div>
+    <div class="small">大小：${(item.size_bytes / 1024 / 1024).toFixed(2)} MB</div>
+  `;
+  list.appendChild(div);
+});
+</script>
+
+</body>
+</html>
