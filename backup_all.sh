@@ -1,47 +1,75 @@
 #!/usr/bin/env bash
-set -Eeuo pipefail
+set -euo pipefail
 
-BASE_DIR="$(cd "$(dirname "$0")" && pwd)"
-REPO_LIST="$BASE_DIR/repos.txt"
-LOG_DIR="$BASE_DIR/logs"
-WORK_ROOT="$BASE_DIR/work"
+ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
+WORK_ROOT="$ROOT_DIR/work"
+PUBLIC_DIR="$ROOT_DIR/public"
+REPOS_FILE="$ROOT_DIR/repos.txt"
 
-mkdir -p "$LOG_DIR" "$WORK_ROOT"
-
-[[ -f "$REPO_LIST" ]] || {
-  echo "❌ repos.txt 不存在"
-  exit 1
-}
+mkdir -p "$WORK_ROOT" "$PUBLIC_DIR"
 
 SUCCESS=()
 FAILED=()
 
-while read -r repo_url; do
-  [[ -z "$repo_url" || "$repo_url" =~ ^# ]] && continue
+while read -r repo; do
+  [[ -z "$repo" || "$repo" =~ ^# ]] && continue
 
-  owner="$(basename "$(dirname "$repo_url")")"
-  repo="$(basename "$repo_url" .git)"
-  REPO_ID="${owner}__${repo}"
-
-  echo "📦 备份：$REPO_ID"
-
-  if REPO_NAME="$REPO_ID" \
-     bash "$BASE_DIR/backup_one.sh" "$repo_url"; then
-    SUCCESS+=("$repo_url")
+  if ./backup_one.sh "$repo"; then
+    SUCCESS+=("$repo")
   else
-    FAILED+=("$repo_url")
+    FAILED+=("$repo")
   fi
 
   echo "----------------------------"
-done < "$REPO_LIST"
+done < "$REPOS_FILE"
+
+# ===== index.json 聚合 =====
+INDEX_JSON="$PUBLIC_DIR/index.json"
+
+jq -s '.' "$WORK_ROOT"/*/report.json > "$INDEX_JSON"
+
+# ===== HTML 页面 =====
+cat > "$PUBLIC_DIR/index.html" <<'EOF'
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>GitHub Backup Index</title>
+</head>
+<body>
+<h1>GitHub Backup Index</h1>
+<ul id="list"></ul>
+<script>
+fetch('index.json').then(r=>r.json()).then(data=>{
+  const ul = document.getElementById('list');
+  data.forEach(i=>{
+    const li=document.createElement('li');
+    li.innerText = `${i.repo} | ${i.status} | ${i.timestamp}`;
+    ul.appendChild(li);
+  });
+});
+</script>
+</body>
+</html>
+EOF
+
+# ===== Actions push 处理 =====
+if [[ -n "${GITHUB_ACTIONS:-}" ]]; then
+  git config user.name "github-actions[bot]"
+  git config user.email "github-actions[bot]@users.noreply.github.com"
+  git remote set-url origin \
+    "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+fi
+
+git add public
+git commit -m "update index $(date '+%Y%m%d-%H%M%S')" || true
+git push
+
+echo "✅ 成功仓库：${#SUCCESS[@]}"
+printf '  ✔ %s\n' "${SUCCESS[@]:-}"
 
 echo
-echo "✅ 成功仓库：${#SUCCESS[@]}"
-printf '  ✔ %s\n' "${SUCCESS[@]}"
+echo "❌ 失败仓库：${#FAILED[@]}"
+printf '  ✘ %s\n' "${FAILED[@]:-}"
 
-if (( ${#FAILED[@]} > 0 )); then
-  echo
-  echo "❌ 失败仓库：${#FAILED[@]}"
-  printf '  ✘ %s\n' "${FAILED[@]}"
-  exit 1
-fi
+[[ ${#FAILED[@]} -eq 0 ]]
