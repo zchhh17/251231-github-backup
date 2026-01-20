@@ -25,8 +25,8 @@ done < "$REPOS_FILE"
 
 # ===== index.json 聚合 =====
 INDEX_JSON="$PUBLIC_DIR/index.json"
+jq -s '.' work/*/*/report.json > index.json
 
-jq -s '.' "$WORK_ROOT"/*/report.json > "$INDEX_JSON"
 
 # ===== HTML 页面 =====
 cat > "$PUBLIC_DIR/index.html" <<'EOF'
