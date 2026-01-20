@@ -1,12 +1,21 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -Eeuo pipefail
 
-ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
-WORK_ROOT="$ROOT_DIR/work"
-PUBLIC_DIR="$ROOT_DIR/public"
-REPOS_FILE="$ROOT_DIR/repos.txt"
+: "${GITHUB_TOKEN:=}"
 
-mkdir -p "$WORK_ROOT" "$PUBLIC_DIR"
+BASE_DIR="$(cd "$(dirname "$0")" && pwd)"
+WORK_ROOT="$BASE_DIR/work"
+REPOS_FILE="$BASE_DIR/repos.txt"
+INDEX_JSON="$WORK_ROOT/index.json"
+
+mkdir -p "$WORK_ROOT"
+
+if [[ "${GITHUB_ACTIONS:-}" == "true" ]]; then
+  git config --global user.name "github-actions[bot]"
+  git config --global user.email "github-actions[bot]@users.noreply.github.com"
+  git remote set-url origin \
+    "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+fi
 
 SUCCESS=()
 FAILED=()
@@ -19,57 +28,30 @@ while read -r repo; do
   else
     FAILED+=("$repo")
   fi
-
   echo "----------------------------"
 done < "$REPOS_FILE"
 
-# ===== index.json 聚合 =====
-INDEX_JSON="$PUBLIC_DIR/index.json"
-jq -s '.' work/*/*/report.json > index.json
+# ===== index.json =====
+jq -s '{
+  generated_at: now | strftime("%Y-%m-%d %H:%M:%S"),
+  items: .
+}' "$WORK_ROOT"/*/*/report.json > "$INDEX_JSON"
 
-
-# ===== HTML 页面 =====
-cat > "$PUBLIC_DIR/index.html" <<'EOF'
-<!doctype html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>GitHub Backup Index</title>
-</head>
-<body>
-<h1>GitHub Backup Index</h1>
-<ul id="list"></ul>
-<script>
-fetch('index.json').then(r=>r.json()).then(data=>{
-  const ul = document.getElementById('list');
-  data.forEach(i=>{
-    const li=document.createElement('li');
-    li.innerText = `${i.repo} | ${i.status} | ${i.timestamp}`;
-    ul.appendChild(li);
-  });
-});
-</script>
-</body>
-</html>
-EOF
-
-# ===== Actions push 处理 =====
-if [[ -n "${GITHUB_ACTIONS:-}" ]]; then
-  git config user.name "github-actions[bot]"
-  git config user.email "github-actions[bot]@users.noreply.github.com"
-  git remote set-url origin \
-    "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
-fi
-
-git add public
-git commit -m "update index $(date '+%Y%m%d-%H%M%S')" || true
+git add work
+git commit -m "backup(all): $(date '+%Y%m%d-%H%M%S')" || true
 git push
 
+TAG="backup-$(date '+%Y%m%d-%H%M%S')"
+git tag "$TAG"
+git push origin "$TAG"
+
+# ===== 清理 7 天前 =====
+find "$WORK_ROOT" -mindepth 2 -maxdepth 2 -type d -mtime +7 -exec rm -rf {} +
+
+echo
 echo "✅ 成功仓库：${#SUCCESS[@]}"
 printf '  ✔ %s\n' "${SUCCESS[@]:-}"
 
 echo
 echo "❌ 失败仓库：${#FAILED[@]}"
 printf '  ✘ %s\n' "${FAILED[@]:-}"
-
-[[ ${#FAILED[@]} -eq 0 ]]
