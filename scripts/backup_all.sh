@@ -3,7 +3,7 @@ set -Eeuo pipefail
 
 BASE_DIR="$(cd "$(dirname "$0")" && pwd)"
 LOG_DIR="$BASE_DIR/logs"
-LOG_FILE="$LOG_DIR/2601031051run_all-$(date '+%Y%m%d-%H%M%S').log"
+LOG_FILE="$LOG_DIR/backup_all-$(date '+%Y%m%d-%H%M%S').log"
 
 mkdir -p "$LOG_DIR"
 
@@ -29,7 +29,7 @@ bash "$BASE_DIR/2601031022build_index.sh"
 
 # 3. 构建 HTML 索引
 step "生成 index.html"
-bash "$BASE_DIR/2601031036build_index_html.sh"
+bash "$BASE_DIR/generate_index_html.sh"
 
 # 4. 发布 index.json 到 Release
 step "发布 index.json 到 GitHub Release"
@@ -41,7 +41,7 @@ bash "$BASE_DIR/2601032021publish_pages.sh"
 
 # 6. 清理旧 work 目录（默认 10 天）
 step "清理旧 work 目录"
-bash "$BASE_DIR/2601031036cleanup_work.sh 10"
+bash "$BASE_DIR/cleanup_work.sh 10"
 
 echo
 echo "======================================"
