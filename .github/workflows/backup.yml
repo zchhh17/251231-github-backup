@@ -21,6 +21,8 @@ jobs:
         run: sudo apt-get install -y jq
 
       - name: Run backup
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           chmod +x backup_all.sh backup_one.sh
           ./backup_all.sh
