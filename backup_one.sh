@@ -5,6 +5,7 @@ REPO_URL="$1"
 ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
 WORK_ROOT="$ROOT_DIR/work"
 
+# ===== 解析 repo =====
 REPO_PATH="${REPO_URL##*github.com/}"
 REPO_PATH="${REPO_PATH%.git}"
 OWNER="${REPO_PATH%%/*}"
@@ -12,6 +13,7 @@ NAME="${REPO_PATH##*/}"
 SAFE_NAME="${OWNER}__${NAME}"
 
 TIMESTAMP="$(date '+%Y%m%d-%H%M%S')"
+
 BASE_DIR="$WORK_ROOT/$SAFE_NAME/$TIMESTAMP"
 SRC_DIR="$BASE_DIR/src"
 PKG_DIR="$BASE_DIR/pkg"
@@ -20,14 +22,22 @@ mkdir -p "$SRC_DIR" "$PKG_DIR"
 
 echo "➡️ 处理仓库：$SAFE_NAME"
 
+# ===== clone =====
 git clone --depth=1 "$REPO_URL" "$SRC_DIR"
 
+# ===== 打包（明确不含 .git）=====
 PKG_FILE="$PKG_DIR/source-${SAFE_NAME}-${TIMESTAMP}.tar.gz"
-tar --exclude='.git' -czf "$PKG_FILE" -C "$SRC_DIR" .
 
+tar \
+  --exclude='.git' \
+  -czf "$PKG_FILE" \
+  -C "$SRC_DIR" .
+
+# ===== 校验 =====
 SHA256="$(sha256sum "$PKG_FILE" | awk '{print $1}')"
-SIZE="$(stat -c '%s' "$PKG_FILE')"
+SIZE="$(stat -c '%s' "$PKG_FILE")"
 
+# ===== report.json =====
 cat > "$BASE_DIR/report.json" <<EOF
 {
   "repo": "$SAFE_NAME",
