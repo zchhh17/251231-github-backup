@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-: "${GITHUB_TOKEN:=}"
-
 REPO_URL="${1:?repo url required}"
 
 AUTHOR="$(basename "$(dirname "$REPO_URL")")"
@@ -16,9 +14,8 @@ WORK_ROOT="$BASE_DIR/work"
 WORK_DIR="$WORK_ROOT/$REPO_KEY/$TIMESTAMP"
 SRC_DIR="$WORK_DIR/src"
 PKG_DIR="$WORK_DIR/_pkg"
-LOG_DIR="$BASE_DIR/logs"
 
-mkdir -p "$SRC_DIR" "$PKG_DIR" "$LOG_DIR"
+mkdir -p "$SRC_DIR" "$PKG_DIR"
 
 echo "➡️ 处理仓库：$REPO_KEY"
 
@@ -33,12 +30,23 @@ tar \
   -czf "$PKG_PATH" \
   -C "$SRC_DIR" .
 
+# ===== updates.md =====
+UPDATE_MD="$WORK_DIR/update.md"
+{
+  echo "# $REPO_KEY"
+  echo
+  echo "- 备份时间：$TIMESTAMP"
+  echo "- 来源仓库：$REPO_URL"
+  echo
+  echo "## 最近提交（10 条）"
+  git -C "$SRC_DIR" log -10 --pretty=format:'- %h %s (%an)'
+} > "$UPDATE_MD"
+
 # ===== report.json =====
-REPORT_FILE="$WORK_DIR/report.json"
 SHA256="$(sha256sum "$PKG_PATH" | awk '{print $1}')"
 SIZE="$(stat -c '%s' "$PKG_PATH")"
 
-cat > "$REPORT_FILE" <<EOF
+cat > "$WORK_DIR/report.json" <<EOF
 {
   "repo": "$REPO_KEY",
   "repo_url": "$REPO_URL",

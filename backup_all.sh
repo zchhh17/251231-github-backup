@@ -5,11 +5,13 @@ set -Eeuo pipefail
 
 BASE_DIR="$(cd "$(dirname "$0")" && pwd)"
 WORK_ROOT="$BASE_DIR/work"
+ARCHIVE_ROOT="$BASE_DIR/archives"
 REPOS_FILE="$BASE_DIR/repos.txt"
-INDEX_JSON="$WORK_ROOT/index.json"
+INDEX_JSON="$BASE_DIR/index.json"
 
-mkdir -p "$WORK_ROOT"
+mkdir -p "$ARCHIVE_ROOT"
 
+# ===== Actions Git 身份 =====
 if [[ "${GITHUB_ACTIONS:-}" == "true" ]]; then
   git config --global user.name "github-actions[bot]"
   git config --global user.email "github-actions[bot]@users.noreply.github.com"
@@ -27,8 +29,17 @@ while read -r repo; do
     SUCCESS+=("$repo")
   else
     FAILED+=("$repo")
+    continue
   fi
-  echo "----------------------------"
+
+  KEY="$(basename "$(dirname "$repo")")__$(basename "$repo" .git)"
+  LATEST="$(ls -1 "$WORK_ROOT/$KEY" | sort | tail -n1)"
+  SRC="$WORK_ROOT/$KEY/$LATEST"
+
+  mkdir -p "$ARCHIVE_ROOT/$KEY/snapshots" "$ARCHIVE_ROOT/$KEY/updates"
+
+  cp "$SRC/_pkg/"*.tar.gz "$ARCHIVE_ROOT/$KEY/snapshots/"
+  cp "$SRC/update.md" "$ARCHIVE_ROOT/$KEY/updates/$LATEST.md"
 done < "$REPOS_FILE"
 
 # ===== index.json =====
@@ -37,7 +48,7 @@ jq -s '{
   items: .
 }' "$WORK_ROOT"/*/*/report.json > "$INDEX_JSON"
 
-git add work
+git add archives index.json
 git commit -m "backup(all): $(date '+%Y%m%d-%H%M%S')" || true
 git push
 
@@ -45,7 +56,7 @@ TAG="backup-$(date '+%Y%m%d-%H%M%S')"
 git tag "$TAG"
 git push origin "$TAG"
 
-# ===== 清理 7 天前 =====
+# ===== 清理 7 天前 work =====
 find "$WORK_ROOT" -mindepth 2 -maxdepth 2 -type d -mtime +7 -exec rm -rf {} +
 
 echo
