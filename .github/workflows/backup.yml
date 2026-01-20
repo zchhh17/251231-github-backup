@@ -1,53 +1,26 @@
-name: GitHub Backup (Multi-Repo)
+name: GitHub Backup
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 3 * * *"   # 每天 UTC 03:00（≈ 北京 11:00）
+    - cron: "0 2 * * *"
 
 permissions:
-  contents: write   # 允许 push / tag / release
+  contents: write
 
 jobs:
   backup:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout backup repo
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          persist-credentials: true
 
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y jq
+      - name: Install jq
+        run: sudo apt-get install -y jq
 
-      - name: Configure git
+      - name: Run backup
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-
-      - name: Run backup (all repos)
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          chmod +x backup_all.sh
-          bash backup_all.sh
-
-      - name: Generate index.json
-        run: |
-          chmod +x scripts/generate_index.sh
-          bash scripts/generate_index.sh
-
-      - name: Generate index.html
-        run: |
-          chmod +x scripts/generate_html.sh
-          bash scripts/generate_html.sh
-
-      - name: Cleanup old work dirs
-        env:
-          KEEP_DAYS: 7
-        run: |
-          chmod +x scripts/cleanup_work.sh
-          bash scripts/cleanup_work.sh
+          chmod +x backup_all.sh backup_one.sh
+          ./backup_all.sh
