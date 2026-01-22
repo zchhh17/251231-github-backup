@@ -1,2 +1,41 @@
-[
-]
+{
+  "generated_at": "2026-01-22 02:52:41",
+  "items": [
+    {
+      "repo": "byJoey__cfnew",
+      "repo_url": "https://github.com/byJoey/cfnew.git",
+      "timestamp": "20260120-125146",
+      "package": "source-byJoey__cfnew-20260120-125146.tar.gz",
+      "sha256": "5c929bd80ea0d74b5e2eae1639dd1b1b09e80d0ea102dacd0ca89b99b68f130a",
+      "size_bytes": 176808,
+      "status": "success"
+    },
+    {
+      "repo": "byJoey__cfnew",
+      "repo_url": "https://github.com/byJoey/cfnew.git",
+      "timestamp": "20260122-025241",
+      "package": "source-byJoey__cfnew-20260122-025241.tar.gz",
+      "sha256": "610eb5277bd4912a743ea6cde465a91c8a276a8cae4567710466f98f79b80632",
+      "size_bytes": 177262,
+      "status": "success"
+    },
+    {
+      "repo": "cmliu__edgetunnel",
+      "repo_url": "https://github.com/cmliu/edgetunnel.git",
+      "timestamp": "20260120-125147",
+      "package": "source-cmliu__edgetunnel-20260120-125147.tar.gz",
+      "sha256": "719cb3ab14e94bf5f3d803a446165d1a1f10060e417d460ffa77ffe06b657097",
+      "size_bytes": 277891,
+      "status": "success"
+    },
+    {
+      "repo": "cmliu__edgetunnel",
+      "repo_url": "https://github.com/cmliu/edgetunnel.git",
+      "timestamp": "20260122-025241",
+      "package": "source-cmliu__edgetunnel-20260122-025241.tar.gz",
+      "sha256": "1b2fbc29964ce6d1ab67983c96bb3a3dcb0b1eabeaad5cea0aed495489450957",
+      "size_bytes": 278582,
+      "status": "success"
+    }
+  ]
+}
