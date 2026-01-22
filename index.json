@@ -1,34 +1,72 @@
 [
 {
-  "repo": "Cloudflare-proxy",
-  "repo_url": "https://github.com/eooce/Cloudflare-proxy.git",
-  "timestamp": "2026-01-22 15:35:02",
+  "repo": "byJoey__cfnew",
+  "repo_url": "https://github.com/byJoey/cfnew.git",
+  "timestamp": "20260122-153936",
   "status": "success",
-  "workdir": "work",
-  "package": "source-Cloudflare-proxy-20260122-153502.tar.gz",
-  "sha256": "815118a506df0f490ae5eed416d8fa726801526940ee635e85304b927d3e0a70",
-  "size_bytes": 50411
+  "package": "source-byJoey__cfnew-20260122-153936.tar.gz",
+  "sha256": "85e393ffe90440f0d11e55ea66c540304d8fd60005c9e13b2d6f3447f63ccc10",
+  "size_bytes": 178881
 }
 ,
 {
-  "repo": "cfnew",
+  "repo": "byJoey__cfnew",
   "repo_url": "https://github.com/byJoey/cfnew.git",
-  "timestamp": "2026-01-22 15:34:00",
+  "timestamp": "20260123-044802",
   "status": "success",
-  "workdir": "work",
-  "package": "source-cfnew-20260122-153400.tar.gz",
-  "sha256": "c1517cd0b1c9ff99e2cdcf3286043e2346781f7dbf5a66720498b75f6c8c974a",
+  "package": "source-byJoey__cfnew-20260123-044802.tar.gz",
+  "sha256": "c5884be9c5bcda30dd80cdb416ac03c8d1f7f29c5198c20f57ffdaf39eb8b5c6",
   "size_bytes": 178880
+}
+,
+{
+  "repo": "cmliu__edgetunnel",
+  "repo_url": "https://github.com/cmliu/edgetunnel.git",
+  "timestamp": "20260122-154012",
+  "status": "success",
+  "package": "source-cmliu__edgetunnel-20260122-154012.tar.gz",
+  "sha256": "3f044d9750946c0bcc2a5eb07432e2cb7fa25d75f109c5fad1de2f29ba801866",
+  "size_bytes": 278561
+}
+,
+{
+  "repo": "cmliu__edgetunnel",
+  "repo_url": "https://github.com/cmliu/edgetunnel.git",
+  "timestamp": "20260123-044813",
+  "status": "success",
+  "package": "source-cmliu__edgetunnel-20260123-044813.tar.gz",
+  "sha256": "edfbb23d1dcfae496e5691bc486db4da7303dca609d95ded48e1b18af614758d",
+  "size_bytes": 278705
 }
 ,
 {
   "repo": "edgetunnel",
   "repo_url": "https://github.com/cmliu/edgetunnel.git",
-  "timestamp": "2026-01-22 15:34:53",
+  "timestamp": "2026-01-23 04:51:05",
   "status": "success",
   "workdir": "work",
-  "package": "source-edgetunnel-20260122-153453.tar.gz",
-  "sha256": "4d4bbef13e6b6b37f3346901395ef9b3880879ff4b9fdedc2fbb02c107dfe0b3",
-  "size_bytes": 278564
+  "package": "source-edgetunnel-20260123-045105.tar.gz",
+  "sha256": "bbbe90bbd8b2254adab25c64c95ced0f01eb8edffef0a5853490bb7ded399e42",
+  "size_bytes": 278710
+}
+,
+{
+  "repo": "eooce__Cloudflare-proxy",
+  "repo_url": "https://github.com/eooce/Cloudflare-proxy.git",
+  "timestamp": "20260122-154021",
+  "status": "success",
+  "package": "source-eooce__Cloudflare-proxy-20260122-154021.tar.gz",
+  "sha256": "ef1f17e5744828cb02daab9234b71ff661ad508475c3874ee82f4671de1edaee",
+  "size_bytes": 50418
+}
+,
+{
+  "repo": "eooce__Cloudflare-proxy",
+  "repo_url": "https://github.com/eooce/Cloudflare-proxy.git",
+  "timestamp": "20260123-044822",
+  "status": "success",
+  "package": "source-eooce__Cloudflare-proxy-20260123-044822.tar.gz",
+  "sha256": "db90fd7153182e2b3b47f7e1f7237963692e8241490b97f5bfbb17ac68c0a794",
+  "size_bytes": 50415
 }
 ]
