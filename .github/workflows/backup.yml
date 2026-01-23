@@ -1,12 +1,13 @@
 name: GitHub Repos Backup
 
 on:
-  # 每天自动执行一次（UTC 01:00 ≈ 北京时间 09:00）
   schedule:
     - cron: '0 1 * * *'
-
-  # 允许你在 Actions 页面手动点 Run
   workflow_dispatch:
+
+# ⭐⭐⭐ 关键：给 Actions 写权限 ⭐⭐⭐
+permissions:
+  contents: write
 
 jobs:
   backup:
@@ -16,7 +17,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0   # 必须，否则 tag / commit 可能失败
+          fetch-depth: 0
 
       - name: Install dependencies
         run: |
