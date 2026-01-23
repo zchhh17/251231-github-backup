@@ -1,35 +1,25 @@
-name: GitHub Repos Backup
+name: GitHub Backup
 
 on:
   schedule:
-    - cron: '0 1 * * *'
+    - cron: '0 1 * * *'   # 每天一次（UTC）
   workflow_dispatch:
 
-# ⭐⭐⭐ 关键：给 Actions 写权限 ⭐⭐⭐
 permissions:
   contents: write
 
 jobs:
   backup:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+      - uses: actions/checkout@v4
 
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y jq
-
-      - name: Make scripts executable
-        run: |
-          chmod +x backup_all.sh backup_one.sh
+      - name: Install deps
+        run: sudo apt-get update && sudo apt-get install -y jq
 
       - name: Run backup
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          chmod +x backup_all.sh backup_one.sh
           ./backup_all.sh
