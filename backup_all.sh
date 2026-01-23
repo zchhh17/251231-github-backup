@@ -8,6 +8,7 @@ WORK_ROOT="$BASE_DIR/work"
 ARCHIVE_ROOT="$BASE_DIR/archives"
 REPOS_FILE="$BASE_DIR/repos.txt"
 INDEX_JSON="$BASE_DIR/index.json"
+INDEX_HTML="$BASE_DIR/index.html"
 
 mkdir -p "$ARCHIVE_ROOT"
 
