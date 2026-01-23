@@ -66,3 +66,103 @@ printf '  ✔ %s\n' "${SUCCESS[@]:-}"
 echo
 echo "❌ 失败仓库：${#FAILED[@]}"
 printf '  ✘ %s\n' "${FAILED[@]:-}"
+
+# ===== index.json（聚合生成）=====
+echo "🧩 生成 index.json"
+
+INDEX_JSON="public/index.json"
+mkdir -p public
+
+jq -n '{
+  generated_at: (now | strftime("%Y-%m-%d %H:%M:%S")),
+  items: []
+}' > "$INDEX_JSON"
+
+for r in archives/*; do
+  [ -d "$r" ] || continue
+  repo="$(basename "$r")"
+
+  last_pkg="$(ls -1 "$r/snapshots"/*.tar.gz 2>/dev/null | sort | tail -n1)"
+  [ -f "$last_pkg" ] || continue
+
+  ts="$(basename "$last_pkg" | sed -E 's/.*-([0-9]{8}-[0-9]{6}).*/\1/')"
+  size="$(stat -c '%s' "$last_pkg")"
+  sha="$(sha256sum "$last_pkg" | awk '{print $1}')"
+
+  jq --arg repo "$repo" \
+     --arg ts "$ts" \
+     --arg file "$(basename "$last_pkg")" \
+     --arg sha "$sha" \
+     --arg size "$size" \
+     '.items += [{
+        repo: $repo,
+        timestamp: $ts,
+        file: $file,
+        sha256: $sha,
+        size_bytes: ($size | tonumber)
+     }]' "$INDEX_JSON" > "$INDEX_JSON.tmp" \
+     && mv "$INDEX_JSON.tmp" "$INDEX_JSON"
+done
+
+# ===== index.html（静态页面） =====
+echo "🌐 生成 index.html"
+
+cat > public/index.html <<'EOF'
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>GitHub Backup Index</title>
+<style>
+body{font-family:sans-serif;margin:40px;}
+table{border-collapse:collapse;width:100%;}
+th,td{border:1px solid #ccc;padding:8px;}
+th{background:#f5f5f5;}
+</style>
+</head>
+<body>
+<h1>📦 GitHub 多仓备份索引</h1>
+<table>
+<thead>
+<tr>
+<th>仓库</th>
+<th>时间</th>
+<th>文件</th>
+<th>大小</th>
+<th>SHA256</th>
+</tr>
+</thead>
+<tbody id="data"></tbody>
+</table>
+
+<script>
+fetch('index.json')
+.then(r=>r.json())
+.then(j=>{
+  const tb=document.getElementById('data');
+  j.items.forEach(i=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td>${i.repo}</td>
+      <td>${i.timestamp}</td>
+      <td>${i.file}</td>
+      <td>${(i.size_bytes/1024/1024).toFixed(2)} MB</td>
+      <td><code>${i.sha256}</code></td>`;
+    tb.appendChild(tr);
+  });
+});
+</script>
+</body>
+</html>
+EOF
+
+# ===== GitHub Release（④） =====
+echo "🚀 创建 GitHub Release"
+
+TAG="backup-$(date '+%Y%m%d-%H%M%S')"
+
+gh release create "$TAG" \
+  public/index.json \
+  public/index.html \
+  --title "Backup $TAG" \
+  --notes "自动多仓备份 Release"
