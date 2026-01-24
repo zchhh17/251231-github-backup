@@ -1,19 +1,23 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-REPO_URL="$1"
-[[ -z "$REPO_URL" ]] && { echo "❌ 未提供仓库地址"; exit 1; }
+# ================= 基本参数 =================
+REPO_URL="${1:-}"
+if [[ -z "$REPO_URL" ]]; then
+  echo "❌ 未提供仓库地址"
+  exit 1
+fi
 
-OWNER="$(basename "$(dirname "$REPO_URL")")"
-NAME="$(basename "$REPO_URL" .git)"
-KEY="${OWNER}__${NAME}"
+# repo key：author__repo
+AUTHOR="$(basename "$(dirname "$REPO_URL")")"
+REPO_NAME="$(basename "$REPO_URL" .git)"
+KEY="${AUTHOR}__${REPO_NAME}"
+
+TIMESTAMP="$(date '+%Y%m%d-%H%M%S')"
 
 BASE_DIR="$(cd "$(dirname "$0")" && pwd)"
 WORK_ROOT="$BASE_DIR/work"
-ARCHIVE_ROOT="$BASE_DIR/archives"
-
-TS="$(date '+%Y%m%d-%H%M%S')"
-WORK_DIR="$WORK_ROOT/$KEY/$TS"
+WORK_DIR="$WORK_ROOT/$KEY/$TIMESTAMP"
 SRC_DIR="$WORK_DIR/src"
 PKG_DIR="$WORK_DIR/_pkg"
 
@@ -21,40 +25,49 @@ mkdir -p "$SRC_DIR" "$PKG_DIR"
 
 echo "➡️ 处理仓库：$KEY"
 
+# ================= clone =================
 git clone --depth=1 "$REPO_URL" "$SRC_DIR"
 
-PKG_NAME="source-${KEY}-${TS}.tar.gz"
+# ================= 打包（不包含 .git） =================
+PKG_NAME="source-${KEY}-${TIMESTAMP}.tar.gz"
 PKG_PATH="$PKG_DIR/$PKG_NAME"
 
 tar \
   --exclude='.git' \
-  --exclude='_pkg' \
   -czf "$PKG_PATH" \
   -C "$SRC_DIR" .
 
-# ===== 生成 update.md =====
-git -C "$SRC_DIR" log -10 --pretty=format:'- %h %s (%an)' > "$WORK_DIR/update.md"
+if [[ ! -f "$PKG_PATH" ]]; then
+  echo "❌ 打包失败"
+  exit 2
+fi
 
-# ===== 生成 report.json =====
-sha="$(sha256sum "$PKG_PATH" | awk '{print $1}')"
-size="$(stat -c '%s' "$PKG_PATH')"
+# ================= update.md =================
+UPDATE_MD="$WORK_DIR/update.md"
+{
+  echo "# $KEY"
+  echo
+  echo "- 时间：$TIMESTAMP"
+  echo "- 来源：$REPO_URL"
+  echo
+  echo "## 最近提交（10 条）"
+  git -C "$SRC_DIR" log -10 --pretty=format:'- %h %s (%an)'
+} > "$UPDATE_MD"
 
-cat > "$WORK_DIR/report.json" <<EOF
+# ================= report.json =================
+REPORT_JSON="$WORK_DIR/report.json"
+SIZE_BYTES="$(stat -c '%s' "$PKG_PATH")"
+SHA256="$(sha256sum "$PKG_PATH" | awk '{print $1}')"
+
+cat > "$REPORT_JSON" <<EOF
 {
   "repo": "$KEY",
   "repo_url": "$REPO_URL",
-  "timestamp": "$(date '+%Y-%m-%d %H:%M:%S')",
-  "status": "success",
+  "timestamp": "$TIMESTAMP",
   "package": "$PKG_NAME",
-  "sha256": "$sha",
-  "size_bytes": $size
+  "size_bytes": $SIZE_BYTES,
+  "sha256": "$SHA256"
 }
 EOF
-
-# ===== 入库 =====
-mkdir -p "$ARCHIVE_ROOT/$KEY/snapshots" "$ARCHIVE_ROOT/$KEY/updates"
-
-cp "$PKG_PATH" "$ARCHIVE_ROOT/$KEY/snapshots/"
-cp "$WORK_DIR/update.md" "$ARCHIVE_ROOT/$KEY/updates/$TS.md"
 
 echo "✅ 完成：$KEY"
