@@ -1,0 +1,12 @@
+[
+{
+  "repo": "Cloudflare-proxy",
+  "repo_url": "https://github.com/eooce/Cloudflare-proxy.git",
+  "timestamp": "2026-01-25 16:11:15",
+  "status": "success",
+  "workdir": "work",
+  "package": "source-Cloudflare-proxy-20260125-161115.tar.gz",
+  "sha256": "1af3371353356735ffc940c0ff994ccff3592f66ab701c168de3dd299d5c566d",
+  "size_bytes": 50435
+}
+]
