@@ -1,12 +1,11 @@
 [
 {
-  "repo": "Cloudflare-proxy",
-  "repo_url": "https://github.com/eooce/Cloudflare-proxy.git",
-  "timestamp": "2026-01-25 16:11:15",
+  "repo": "cmliu__edgetunnel",
+  "repo_url": "https://github.com/cmliu/edgetunnel.git",
+  "timestamp": "20260127-010522",
   "status": "success",
-  "workdir": "work",
-  "package": "source-Cloudflare-proxy-20260125-161115.tar.gz",
-  "sha256": "1af3371353356735ffc940c0ff994ccff3592f66ab701c168de3dd299d5c566d",
-  "size_bytes": 50435
+  "package": "source-cmliu__edgetunnel-20260127-010522.tar.gz",
+  "sha256": "0b8688fb34485f0b2fa5658ff9703c6216e90b4b06cae81d11bac59c487a3f60",
+  "size_bytes": 278744
 }
 ]
