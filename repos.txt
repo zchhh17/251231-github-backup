@@ -1,2 +1,2 @@
-https://github.com/byJoey/cfnew.git
+#https://github.com/byJoey/cfnew.git
 https://github.com/cmliu/edgetunnel.git
