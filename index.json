@@ -1,12 +1,21 @@
 [
 {
-  "repo": "edgetunnel",
+  "repo": "cmliu__edgetunnel",
   "repo_url": "https://github.com/cmliu/edgetunnel.git",
-  "timestamp": "2026-01-28 20:31:40",
+  "timestamp": "20260201-193918",
   "status": "success",
-  "workdir": "work",
-  "package": "source-edgetunnel-20260128-203140.tar.gz",
-  "sha256": "5342de9faea0916d96a9aca7fd96f023282768a6f1658d1539487ee2783c9f95",
-  "size_bytes": 278922
+  "package": "source-cmliu__edgetunnel-20260201-193918.tar.gz",
+  "sha256": "d4f82945c42d01bff9abe272f09464eff014136d8c187b47bc574d45eefb05cc",
+  "size_bytes": 285799
+}
+,
+{
+  "repo": "eooce__Cloudflare-proxy",
+  "repo_url": "https://github.com/eooce/Cloudflare-proxy.git",
+  "timestamp": "20260201-194045",
+  "status": "success",
+  "package": "source-eooce__Cloudflare-proxy-20260201-194045.tar.gz",
+  "sha256": "29a37209adbaf092087c5ec8dbe99b5360eaf31e695aadd481f6b39597282536",
+  "size_bytes": 50443
 }
 ]
